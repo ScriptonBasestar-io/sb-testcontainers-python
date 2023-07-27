@@ -1,4 +1,4 @@
-testcontainers-python
+sb-testcontainers-python
 =====================
 
 .. image:: https://github.com/testcontainers/testcontainers-python/workflows/testcontainers-python/badge.svg

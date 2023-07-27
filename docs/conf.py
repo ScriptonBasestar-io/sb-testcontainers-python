@@ -103,7 +103,7 @@ html_theme = 'alabaster'
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'testcontainersdoc'
+htmlhelp_basename = 'sbtestcontainersdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -130,7 +130,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'testcontainers.tex', u'testcontainers Documentation',
+    (master_doc, 'sb-testcontainers.tex', u'sb-testcontainers Documentation',
      u'Sergey Pirogov', 'manual'),
 ]
 
@@ -152,6 +152,6 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'sb-testcontainers', u'testcontainers Documentation',
-     author, 'testcontainers', 'One line description of project.',
+     author, 'sb-testcontainers', 'One line description of project.',
      'Miscellaneous'),
 ]

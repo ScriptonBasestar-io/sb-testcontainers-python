@@ -8,7 +8,7 @@ RUN = docker run --rm -it
 
 # Default target
 
-default : tests/3.8
+default : tests/3.11
 
 
 # Targets to build requirement files
@@ -26,7 +26,7 @@ ${REQUIREMENTS} : requirements/%.txt : requirements.in setup.py
 images : ${IMAGES}
 
 ${IMAGES} : image/% : requirements/%.txt
-	docker build --build-arg version=$* -t testcontainers-python:$* .
+	docker build --build-arg version=$* -t sb-testcontainers-python:$* .
 
 
 # Targets to run tests in docker containers
@@ -34,7 +34,7 @@ ${IMAGES} : image/% : requirements/%.txt
 tests : ${TESTS}
 
 ${TESTS} : tests/% : image/%
-	${RUN} -v /var/run/docker.sock:/var/run/docker.sock testcontainers-python:$* \
+	${RUN} -v /var/run/docker.sock:/var/run/docker.sock sb-testcontainers-python:$* \
 		bash -c "flake8 && pytest -v ${ARGS}"
 
 # Target to build the documentation

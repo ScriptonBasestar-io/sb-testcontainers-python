@@ -1,4 +1,4 @@
-ARG version=3.8
+ARG version=3.11
 FROM python:${version}
 
 WORKDIR /workspace
