@@ -12,8 +12,6 @@
 #    under the License.
 import os
 
-import psycopg2
-
 from testcontainers.core.generic import DbContainer
 
 
@@ -26,10 +24,10 @@ class PostgresContainer(DbContainer):
     The example spins up a Postgres database and connects to it using the :code:`psycopg` driver.
     .. doctest::
 
-        >>> from testcontainers.postgres import PostgresContainer
         >>> import sqlalchemy
+        >>> from testcontainers.db.postgres import PostgresContainer
 
-        >>> postgres_container = PostgresContainer("postgres:9.5")
+        >>> postgres_container = PostgresContainer("postgres:14.8")
         >>> with postgres_container as postgres:
         ...     e = sqlalchemy.create_engine(postgres.get_connection_url())
         ...     result = e.execute("select version()")
@@ -58,17 +56,32 @@ class PostgresContainer(DbContainer):
         self.with_exposed_ports(self.port_to_expose)
 
     def check_connection(self):
-        print('check_connection child')
-        conn = psycopg2.connect(
-            # dbname=self.POSTGRES_DB,
-            database=self.POSTGRES_DB,
-            user=self.POSTGRES_USER,
-            password=self.POSTGRES_PASSWORD,
-            host=self.get_container_host_ip(),
-            port=self.get_exposed_port(5432),
-        )
-        conn.cursor().execute('SELECT 1')
-        conn.close()
+        import importlib.util
+        if importlib.util.find_spec('psycopg2'):
+            import psycopg2
+            conn = psycopg2.connect(
+                # dbname=self.POSTGRES_DB,
+                database=self.POSTGRES_DB,
+                user=self.POSTGRES_USER,
+                password=self.POSTGRES_PASSWORD,
+                host=self.get_container_host_ip(),
+                port=self.get_exposed_port(5432),
+            )
+            conn.cursor().execute('SELECT 1')
+            conn.close()
+        elif importlib.util.find_spec('pg8000'):
+            import pg8000.native
+            conn = pg8000.native.Connection(
+                host=self.get_container_host_ip(),
+                port=self.get_exposed_port(5432),
+                user=self.POSTGRES_USER,
+                password=self.POSTGRES_PASSWORD,
+                database=self.POSTGRES_DB,
+            )
+            conn.run('SELECT 1')
+            conn.close()
+        else:
+            raise Exception('not found psycopg2 or pg8000')
 
     def _configure(self):
         self.with_env("POSTGRES_USER", self.POSTGRES_USER)

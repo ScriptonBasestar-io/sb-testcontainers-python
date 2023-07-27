@@ -13,7 +13,6 @@
 
 from abc import *
 
-import psycopg2
 from deprecation import deprecated
 
 from testcontainers.core.container import DockerContainer
@@ -21,16 +20,19 @@ from testcontainers.core.waiting_utils import wait_container_is_ready
 
 ADDITIONAL_TRANSIENT_ERRORS = []
 try:
-    from sqlalchemy.exc import DBAPIError
-
-    ADDITIONAL_TRANSIENT_ERRORS.append(DBAPIError)
+    import sqlalchemy.exc
+    ADDITIONAL_TRANSIENT_ERRORS.append(sqlalchemy.exc.DBAPIError)
 except ImportError:
     pass
 try:
-    from psycopg2.errors import OperationalError
-
+    import psycopg2
     ADDITIONAL_TRANSIENT_ERRORS.append(psycopg2.OperationalError)
     # ADDITIONAL_TRANSIENT_ERRORS.append(psycopg2.ProgrammingError)
+except ImportError:
+    pass
+try:
+    import pymysql
+    ADDITIONAL_TRANSIENT_ERRORS.append(pymysql.OperationalError)
 except ImportError:
     pass
 

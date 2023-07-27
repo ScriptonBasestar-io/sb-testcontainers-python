@@ -10,8 +10,9 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-from deprecation import deprecated
 from os import environ
+
+from deprecation import deprecated
 
 from testcontainers.core.generic import DbContainer
 
@@ -55,6 +56,22 @@ class MySqlContainer(DbContainer):
         if self.MYSQL_USER == 'root':
             self.MYSQL_ROOT_PASSWORD = self.MYSQL_PASSWORD
 
+    def check_connection(self):
+        import importlib.util
+        if importlib.util.find_spec('pymysql'):
+            import pymysql
+            conn = pymysql.connect(
+                database=self.MYSQL_DATABASE,
+                user=self.MYSQL_USER,
+                password=self.MYSQL_PASSWORD,
+                host=self.get_container_host_ip(),
+                port=int(self.get_exposed_port(3306)),
+            )
+            conn.cursor().execute('SELECT 1')
+            conn.close()
+        else:
+            raise Exception('not found pymysql')
+
     def _configure(self):
         self.with_env("MYSQL_ROOT_PASSWORD", self.MYSQL_ROOT_PASSWORD)
         self.with_env("MYSQL_DATABASE", self.MYSQL_DATABASE)
@@ -83,6 +100,7 @@ class MariaDbContainer(MySqlContainer):
             e = sqlalchemy.create_engine(mariadb.get_connection_url())
             result = e.execute("select version()")
     """
+
     @deprecated(details="Use `MySqlContainer` with 'mariadb:latest' image.")
     def __init__(self, image="mariadb:latest", **kwargs):
         super(MariaDbContainer, self).__init__(image, **kwargs)

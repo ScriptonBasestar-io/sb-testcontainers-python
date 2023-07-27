@@ -28,6 +28,12 @@ Currently available features:
 * Keycloak
 * Azurite container
 
+변경하면서 체크된 것
+-----------
+
+* postgresql
+* mariadb
+
 Installation
 ------------
 
