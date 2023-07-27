@@ -25,7 +25,7 @@ except FileNotFoundError:
     version = 'dev'
 
 setuptools.setup(
-    name='testcontainers',
+    name='sb-testcontainers',
     packages=setuptools.find_packages(exclude=['tests']),
     version=version,
     description='Library provides lightweight, throwaway instances of common databases, Selenium '
