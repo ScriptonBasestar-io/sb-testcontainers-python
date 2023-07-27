@@ -11,35 +11,45 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from abc import *
+
+import psycopg2
+from deprecation import deprecated
+
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.waiting_utils import wait_container_is_ready
-from deprecation import deprecated
-from abc import*
 
 ADDITIONAL_TRANSIENT_ERRORS = []
 try:
     from sqlalchemy.exc import DBAPIError
+
     ADDITIONAL_TRANSIENT_ERRORS.append(DBAPIError)
+except ImportError:
+    pass
+try:
+    from psycopg2.errors import OperationalError
+
+    ADDITIONAL_TRANSIENT_ERRORS.append(psycopg2.OperationalError)
+    # ADDITIONAL_TRANSIENT_ERRORS.append(psycopg2.ProgrammingError)
 except ImportError:
     pass
 
 
-class DbContainer(DockerContainer):
-    def __init__(self, image, **kwargs):
+class DbContainer(DockerContainer, metaclass=ABCMeta):
+
+    def __init__(self, image, *errors, **kwargs):
         super(DbContainer, self).__init__(image, **kwargs)
 
     @wait_container_is_ready(*ADDITIONAL_TRANSIENT_ERRORS)
     def _connect(self):
-        # import sqlalchemy
-        # engine = sqlalchemy.create_engine(self.get_connection_url())
-        # engine.connect()
-        check_connection()
-    
+        print('_connect')
+        self.check_connection()
+
     @abstractmethod
     def check_connection(self):
-        pass
+        raise NotImplementedError
 
-
+    @abstractmethod
     def get_connection_url(self):
         raise NotImplementedError
 
@@ -63,6 +73,7 @@ class DbContainer(DockerContainer):
         self._connect()
         return self
 
+    @abstractmethod
     def _configure(self):
         raise NotImplementedError
 

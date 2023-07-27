@@ -29,7 +29,7 @@ logger = setup_logger(__name__)
 TRANSIENT_EXCEPTIONS = (TimeoutError, ConnectionError)
 
 
-def wait_container_is_ready(*transient_exceptions):
+def wait_container_is_ready(*p_transient_exceptions):
     """
     Wait until container is ready.
     Function that spawn container should be decorated by this method
@@ -38,7 +38,7 @@ def wait_container_is_ready(*transient_exceptions):
     :return:
     """
 
-    transient_exceptions = TRANSIENT_EXCEPTIONS + tuple(transient_exceptions)
+    transient_exceptions = TRANSIENT_EXCEPTIONS + tuple(p_transient_exceptions)
 
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):

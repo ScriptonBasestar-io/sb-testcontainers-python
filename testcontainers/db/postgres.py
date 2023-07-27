@@ -12,6 +12,8 @@
 #    under the License.
 import os
 
+import psycopg2
+
 from testcontainers.core.generic import DbContainer
 
 
@@ -54,6 +56,19 @@ class PostgresContainer(DbContainer):
         self.driver = driver
 
         self.with_exposed_ports(self.port_to_expose)
+
+    def check_connection(self):
+        print('check_connection child')
+        conn = psycopg2.connect(
+            # dbname=self.POSTGRES_DB,
+            database=self.POSTGRES_DB,
+            user=self.POSTGRES_USER,
+            password=self.POSTGRES_PASSWORD,
+            host=self.get_container_host_ip(),
+            port=self.get_exposed_port(5432),
+        )
+        conn.cursor().execute('SELECT 1')
+        conn.close()
 
     def _configure(self):
         self.with_env("POSTGRES_USER", self.POSTGRES_USER)
