@@ -14,6 +14,8 @@
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.waiting_utils import wait_container_is_ready
 from deprecation import deprecated
+from abc import*
+
 ADDITIONAL_TRANSIENT_ERRORS = []
 try:
     from sqlalchemy.exc import DBAPIError
@@ -28,9 +30,15 @@ class DbContainer(DockerContainer):
 
     @wait_container_is_ready(*ADDITIONAL_TRANSIENT_ERRORS)
     def _connect(self):
-        import sqlalchemy
-        engine = sqlalchemy.create_engine(self.get_connection_url())
-        engine.connect()
+        # import sqlalchemy
+        # engine = sqlalchemy.create_engine(self.get_connection_url())
+        # engine.connect()
+        check_connection()
+    
+    @abstractmethod
+    def check_connection(self):
+        pass
+
 
     def get_connection_url(self):
         raise NotImplementedError
