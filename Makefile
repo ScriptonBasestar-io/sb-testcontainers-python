@@ -1,4 +1,4 @@
-PYTHON_VERSIONS = 3.7 3.8 3.9 3.10
+PYTHON_VERSIONS = 3.7 3.8 3.9 3.10 3.11
 REQUIREMENTS = $(addprefix requirements/,${PYTHON_VERSIONS:=.txt})
 TESTS = $(addprefix tests/,${PYTHON_VERSIONS})
 IMAGES = $(addprefix image/,${PYTHON_VERSIONS})
